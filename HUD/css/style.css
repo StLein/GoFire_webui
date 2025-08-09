@@ -1,0 +1,99 @@
+body {
+  overflow: hidden;
+  background-color: grey;
+}
+
+@font-face {
+    font-family: "方正兰亭黑_GBK";
+    src: url(../../../resource/FZLTHK.ttf);
+}
+
+.ChatFont {
+  font-family: "Microsoft Yahei";
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 1px 1px #000000;
+}
+
+.HudNumbers {
+  font-family: "Microsoft Yahei";
+  font-size: 52px;
+  font-weight: bold;
+}
+
+.HudNumbersLarge {
+  font-family: "Microsoft Yahei";
+  font-size: 84px;
+  font-weight: bold;
+}
+
+.HudNumbersSmall {
+  font-family: "Microsoft Yahei";
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.HudHintTextLarge {
+  font-family: "Microsoft Yahei";
+  font-size: 42px;
+  font-weight: bold;
+  text-shadow: 1px 1px #000000;
+}
+
+.HudHintTextSmall {
+  font-family: "Microsoft Yahei";
+  font-size: 36px;
+  /* font-weight: bold; */
+  text-shadow: 1px 1px #000000;
+  color: rgb(255, 255, 255);
+}
+
+.bottom-center {
+	position: fixed;
+	bottom: 20%;
+	width: 100%;
+	transform: translateX(-50%);
+}
+
+.bottom-center p {
+	text-align: center;
+}
+
+.bottom-center {
+	position: fixed;
+	bottom: 20%;
+	width: 100%;
+	transform: translateX(-50%);
+}
+
+.Hero_Select_Comp{
+  transform: perspective(1vh);
+	position: fixed;
+	top: 20%;
+	width: 100%;
+  text-align: center;
+}
+.hero-drop-enter-active {
+  transition: top 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  position: fixed;
+  width: 100%;
+  text-align: center;
+}
+
+.hero-drop-enter {
+  top: -100%;
+}
+
+.hero-drop-enter-to {
+  top: 20%;
+}
+
+.Hero_Select_Text{
+  position: absolute;
+  top: 64%;
+  color: #FFC107;
+  font-size: 20px;
+  text-shadow: 3px 3px 3px #FF9800;
+  text-align: center;
+  width: 200px;
+}

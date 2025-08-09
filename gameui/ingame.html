@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>ingame</title>
+	<script src="../js/vue@2.7.16.min.js"></script>
+	<style>
+		* {font-family: "Microsoft Yahei", Helvetica, Arial, sans-serif;margin: 0;padding: 0;}
+		html, body {margin: 0;height:100%;color: white;user-select: none;-webkit-user-select: none;}
+		.app {
+			user-select: none;
+			-webkit-user-select: none;
+			overflow-y: hidden;
+			background-color: #333;
+			
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-height: 100vh; 
+			width: 100%;
+		}
+
+
+		.menu-container {
+			text-align: center; 
+			transform: perspective(1);
+			margin-top: calc(-29vw / 13.2);
+		}
+
+		.menu-icon{
+			display: block;
+			width: calc(400vw / 13.2); 
+		}
+
+		.menu-title{
+			display: block;
+			margin: 0 auto;
+			width: calc(153vw / 13.2); 
+			margin-bottom: calc(1vw / 13.2);
+		}
+
+		.menu-list {
+			list-style: none; 
+		}
+
+		.menu-list div {
+			background-image: url('img/UI_SelectWnd/ButtonUp.PNG');
+			background-repeat: no-repeat; 
+			background-size: 100% 100%;
+			width: calc(153vw / 13.2);
+			height: calc(29vw / 13.2);
+			margin: 0 auto;
+			/* margin-bottom: calc(0.6vw / 13.2); */
+			margin-bottom: 2px;
+		}
+		
+		.menu-list div:hover {
+			background-image: url('img/UI_SelectWnd/ButtonFocus.PNG');
+		}
+
+		.menu-list div:active {
+			background-image: url('img/UI_SelectWnd/ButtonDown.PNG');
+		}
+
+		.menu-list div a {
+			display: block; 
+			width: 100%;
+			height: 100%;
+			line-height: calc(29vw / 13.2); 
+			text-decoration: none; 
+			color: #fff; 
+			font-size: calc(12vw / 13.2); 
+ 			/* text-shadow: 0px 0px 1px #000; */
+ 			/* text-shadow:-1px -1px 2px black, 1px -1px 2px black, -1px 1px 2px black, 1px 1px 2px black; */
+ 			text-shadow:-0.5px -0.5px 1px black,  0.5px -0.5px 1px black, -0.5px 0.5px 1px black, 0.5px 0.5px 1px black;
+		}
+		
+		/* 低分辨率适配 */
+		@media (max-width: 1320px) {
+			.menu-container {margin-top: -29px;}
+			.menu-icon{width: 400px; }
+			.menu-title{
+				width: 153px;
+				margin-bottom: 1px;
+			}
+			.menu-list div {
+				width: 153px;
+				height: 29px;
+			}
+			.menu-list div a {
+				line-height: 29px; 
+				font-size: 13px; 
+			}
+		}
+
+	</style>
+</head>
+<body>
+<div id="app" class="app" >
+	<div class="menu-container">
+		<img src="img/UI_SelectWnd/Icon.PNG"  class="menu-icon">
+		<img src="img/UI_SelectWnd/option.PNG" class="menu-title" >
+		<div class="menu-list">
+			<div><a @mouseover="hover($event)" @click="callMenu('OpenOptionsDialog')">设定</a></div>
+			<div><a @mouseover="hover($event)" @click="callMenu('OpenPlayerListDialog')">投票踢人</a></div>
+			<div><a @mouseover="hover($event)" @click="callMenu('engine bug')">举报</a></div>
+			<div><a @mouseover="hover($event)" @click="callMenu('OpenPlayerListDialog')">屏蔽玩家</a></div>
+			<div><a @mouseover="hover($event)" @click="callMenu('Disconnect')">游戏结束 [Enter]</a></div>
+			<div><a @mouseover="hover($event)" @click="callMenu('ResumeGame')">取消 [Esc]</a></div>
+		</div>
+	</div>
+	
+	</div>
+</div>
+<script>
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+function ready(fn) {
+	if (document.readyState !== 'loading') {
+		fn();
+	} else {
+		document.addEventListener('DOMContentLoaded', fn);
+	}
+}
+ready(function () {
+	window.vueIngame.init();
+});
+window.vueIngame = new Vue({
+	el: '#app',
+	data: {
+		inited:false,
+	},
+	methods: {
+		hover(event) {
+			if(window.engine) window.engine.clientCommandUnrestricted("spk \"ui\\ButtonHover.wav\"");
+			else {
+				let mp3 = new Audio('../../sound/ui/ButtonHover.wav')
+				mp3.loop = false
+				mp3.play();
+			}
+		},
+		callMenu(event) {
+			if(window.engine) {
+				window.engine.clientCommandUnrestricted("spk \"ui\\ButtonClick.wav\"");
+				window.engine.clientCommandUnrestricted("cl_menu " + event);
+			}
+		},
+		init(){
+			this.$nextTick(() => {
+				this.inited = true;
+			});
+		}
+	}
+});
+</script>
+</body>
+
+<script src="../js/engine.js"></script>
+</html>
