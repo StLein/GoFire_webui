@@ -9,20 +9,35 @@
 	<style>
 		* {margin: 0;padding: 0;}
 		* {font-family: "Microsoft Yahei", Helvetica, Arial, sans-serif;}
+		.debug button{margin-top: 1em;}
 	</style>
 </head>
 
 <body>
 <div id="app">
 <template v-if="true">
-	<div class="debug" style="position: fixed;padding: 2em;z-index: 99;">
+	<div v-if="debug" class="debug" style="position: fixed;padding: 2em;z-index: 99; display: flex;flex-direction: column;align-items: flex-start;">
 		<button @click="showHeroSlot" >变身特效</button>
 		<button @click="showHeroGlass" >玻璃特效</button>
-		<button @click="window.fakePlayer.m_iRole = RoleType.ROLE_BladeHero" >恶魔剑客</button>
+		<span>
 		<button @click="useFakeSkill" >使用G</button>
 		<button @click="useFakeAbility" v-if="ability_show">使用F</button>
+		<button @click="window.fakePlayer.m_iRole = RoleType.ROLE_BladeHero" >恶魔剑客</button>
 		<button @click="useSpace(1)" v-if="iRole == RoleType.ROLE_BladeHero">使用Space</button>
+		</span>
+		<button @click="window.fakeGlobal.game_mod=window.MOD_ZS">显示ZS记分牌</button>
+		<div >
+			<button @click="demo_Kills"      style="margin-right:8px;">cso击杀提醒</button>
+			<button @click="demo_RoundClear" style="margin-right:8px;">round提醒</button>
+			<button @click="demo_Tooltip"    style="margin-right:8px;">tooltip提醒</button>
+		</div>
 	</div>
+    <!-- <div class="hud-anim-overlay" style="transform: perspective(1);">
+      <div class="pos-box" >
+        <div class="anim-box" ><img class="anim-img" src="./UI/zbs/zbskill.png" alt="hint"></div>
+      </div>
+    </div> -->
+	<hud-anim ref="hud" register-global-as="HUDAnim"></hud-anim>
 	<div v-if="Fx_Glass_Show" style="transform: perspective(1vh);height:100vh;width: 100vw;position: fixed;">
 		<div>
 			<img :src="Fx_Glass_IMG" style="height: 100vh;width: 100vw;">
@@ -42,6 +57,9 @@
 			</div>
 		</div>
 	</transition>
+	<div v-if="iGameMod==window.MOD_ZS" class="top-center" style="transform: perspective(1vh);width: 100%;text-align: center;margin-top: 0.6em;" >
+		<zbs-scoreboard style="margin: auto;" :left="teamScore" :right="iScore" :round="teamRounds" left-color="#FFFFFF" right-color="#77BFFF" ></zbs-scoreboard>
+	</div>
 	<div class="bottom-center" style="transform: perspective(1vh)">
 		<!-- <p id="hintText" class="HudHintTextSmall">notice text</p> -->
 		<transition name="fade">

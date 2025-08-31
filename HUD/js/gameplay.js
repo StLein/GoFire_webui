@@ -20,14 +20,56 @@ window.RoleType = {
 	ROLE_ViperTerminator: 17,
 };
 var MOD_Nano4Ability = 23;
+window.MOD_ZS = 28;
+
+// 大灾变计分板
+Vue.component('zbs-scoreboard', {
+	props: {
+		left: [String, Number],
+		right: [String, Number],
+		round: [String, Number],
+		leftColor: { type: String, default: '#fff' },
+		rightColor: { type: String, default: '#77BFFF' },
+		width: { type: [Number, String], default: 480 }
+	},
+	computed: {
+		leftDigits() { 
+			return (this.left + "").replace(/\D/g,'').split('') 
+		},
+		rightDigits() { 
+			return (this.right + "").replace(/\D/g,'').split('') 
+		},
+		roundDigits() { 
+			return (this.round + "").replace(/\D/g,'').split('') 
+		},
+	},
+	template: `
+	<div class="zbs-scoreboard" :style="{ width: width + 'px'}">
+		<img class="zbs-bg" src="UI/zbs/zbsboard.png" alt="board"/>
+		<div class="score side-left" >
+		<span v-for="(d,i) in leftDigits" :key="'l'+i" class="digit" :style="{ 'background-color': leftColor }" :class="'n'+d"></span>
+		</div>
+		<div class="score side-right" >
+		<span v-for="(d,i) in rightDigits" :key="'r'+i" class="digit" :style="{ 'background-color': rightColor }" :class="'n'+d"></span>
+		</div>
+		<div class="round">
+		<div class="round-num">
+			<span v-for="(d,i) in roundDigits" :key="'m'+i" class="digit" :style="{ 'background-color': '#fff' }" :class="'n'+d"></span>
+		</div>
+		</div>
+	</div>
+	`
+});
 
 window.vueGame = new Vue({
 	el: '#app',
 	data: {
+		debug:false,
 		display:false,
 		bIsAlive:false,
 
 		iRole:0,
+		iScore:0,
 		iGameMod:0,
 
 		showHintText : true, 
@@ -64,6 +106,8 @@ window.vueGame = new Vue({
 		Fx_Glass_Timer: null,
 		Fx_Glass_frame: 0,
 		Fx_Glass_IMG:'UI/frame/glass/0.png',
+
+		teamScore: 0, teamRounds : 0
 	},
 	created: function () {
 		this.display = true;
@@ -216,6 +260,16 @@ window.vueGame = new Vue({
 		useFakeAbility: function () {
 			vueGame.useAbility(5);
 		},
+		
+		demo_Kills(){
+			window.HudHint.show({ src:'./UI/zbs/zbskill.png', duration:100,fadeOutMs: 618, enterEffect:'fade-zoom', leaveEffect:'slide-up', x:.5, y:.2, center:true, channel:22, zIndex:100030 });
+		},
+		demo_RoundClear(){
+			window.HudHint.show({ src:'./UI/zbs/roundclear.png', duration:1500, fadeOutMs:800,enterEffect:'fade-zoom', leaveEffect:'fade', x:.5, y:0.12, center:true, zIndex:100000 });
+		},
+		demo_Tooltip(){
+			window.HudHint.show({ src:'./UI/zbs/roundfail.png', duration:1200,enterEffect:'slide-down', leaveEffect:'fade', x:.9, y:.12, center:true, zIndex:100010 });
+		},
 	}
 })
 
@@ -304,11 +358,21 @@ class CHudGamePlay extends CHudBase {
 		if (!player) {
 			return;
 		}
-		
+
+		vueGame.$data.debug = player.debug;
 		vueGame.$data.iRole = player.m_iRole;
+		vueGame.$data.iScore = player.m_iScore;
 		vueGame.$data.iGameMod = globals.game_mod;
 		vueGame.$data.bIsAlive = player.m_bIsAlive;
 		vueGame.$data.ability_show =  player.m_iAbilityStatus;
+
+		let team_ct = globals.team_ct;
+		if (team_ct) {
+			let teamScore = team_ct.score < player.m_iScore ? player.m_iScore : team_ct.score;
+			vueGame.$data.teamScore = teamScore;
+			vueGame.$data.teamRounds = team_ct.rounds + 1;
+		}
+		
 		if (vueGame.$data.ability_show) {
 			switch (player.m_iRole) {
 				case RoleType.ROLE_MechanicHero:
@@ -385,6 +449,8 @@ getHudList().push(window.GamePlay);
 
 
 window.fakePlayer = {
+	debug:true,
+	m_iScore:0,
 	m_bIsAlive:true,
 	m_iSkillStatus:0,
 	m_iAbilityStatus:1,

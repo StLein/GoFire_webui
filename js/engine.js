@@ -14,7 +14,9 @@
         "interpolation_amount",
         "simTicksThisFrame",
         "network_protocol",
-        "game_mod"
+        "game_mod",
+        "team_ct",
+        "team_terrorist",
       ];
       var self = this;
       fieldMap.forEach(function(i) {

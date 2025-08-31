@@ -97,3 +97,53 @@ body {
   text-align: center;
   width: 200px;
 }
+
+
+/* ===== ZBS Scoreboard styles ===== */
+.zbs-scoreboard{
+	width: 480px; position: relative;
+}
+.zbs-scoreboard .zbs-bg{ width:100%; display:block; }
+.digit{
+	width: 23px;
+	height: 24px;
+	display:inline-block;
+	margin-right: 1px;
+	-webkit-mask-image: url(../UI/zbs/teamnumber.png);
+	mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOYAAAAYCAYAAADu8oHSAAAACXBIWXMAAAsSAAALEgHS3X78AAAEd0lEQVR42u1c7VHjMBB9y1BA6OA6uNCBqQCo4EIFRyo4qACogFwFcBXgDkgHpAPcwbsfUsBxpFiWtQ4KfjNMBuy8bPbL0u4iAADJCck7ku/sh3fLM7G8rp+XDnyFhwOW/4Lka0+Z13LfrOW23AXJpwTcbyRvEAmSU7bbpbD3qqEmz439Tn3xlKHcb3TYMhH3pg/SBGUK567j1fKqBSZNUKbGWu5Ci7tjUM4YliwHcXCm9xNSR9d1aPq3GvcRgDsA09iM7sEUwJ/EnE1o8E8BXFudaHEHgeQ1gEcAnYJZCzRPitR+Aujouo5rBbnXtlTjFpLv0DF+BeDE8fcXAEUgxxmA0nONgRwxcmsFQyUiJ203kXwEMOvAeyYiJUktnWjrRRNaclf2VYX72EFcishZVyaSzYBzCuzjthm5z1NQVW6YJBGClYisOnKvZZkAeII/cS3ta2iWjtKJR7Zm0KfSdzK5PdxNnS8BnEao4BWbenfZcglgHsHdXLVOjiNIviVEpNTkJ/kDJih9QVcCuLT3jIhHpfi+KsZPSG5xHw2slBEOkJxiOyPXsRCRMxGJdaoRmSHbJ6aISI7cTZCcwSxlfMvcuYjcDyXPAJijfV8Wm4By3AM7kW1gHgJs5dVXlaxggnKxbzlTQkSW/Vm2YQtmGlXjvWAMzD2hpfJawVRa+zpx0aNSWwF4AHD/1ZfQNsHNPN8hy6do9oFpK5kzbBrgJ8IN0jnLBlYWXSgDK6+X68ruHjGBqZKfk3RVSPsEPWCLWX2DvrYVcGEO4Bc2dV0gTauthPGdup/11ckHsg7MgP1ZDEpFkecwfdydldcv9oTqNBjRAQWAF5LRRS1bNHv0XL4SkQXJJYzOU/pIhc+g19BNvlVZmjE0jcmYW2XRc6y8/lbURVTv2gbli+fyYqC9+S0+e8tJkW1gIv1IXgWTZUtFmb1LLhG56ksuiYDtVYPmPm3W9Q217YBLrkVDl6lXVGt93Nkkums6LRo5L2WLxu8rAH8juSoYg4Y+rZol/6XrvY69aOHgKjNth2hPWvneP4F5Uv5wXHZN3hSOe2Imf5y2rAXnLnnb6hhb8+o5B2YTKxG5GeKDtEr+I4Lga4ssYSrZbcl10K2ClafcdY9r8ueQAnPEgcO2mC4cl9bbkEGDztY5NuRIlbTHwHTAVfJWnAaa2uVd8P2Ov93ZrFsMKPegaOlVpuj5xqBptxLh/+ywE2Ng7h8TxPVE6ziYiRcX2nqVh7i1yLkqO+IbIKRXuW8ZNXCM7bGlVNMLQ/fjkk1duJBQJ5qthy3+xLYc1E8S9Sq3/BtpJn9ctkymk2MAz4joJQXgWYFzKCyhszxcAPjXk8N1FMzcylxA58iVB/uqyb2Bjr3KNn4tuc+h4ycPgx/G5QPNCWFN7DqMSxNqB331tRjdh5kV9lqWB085vuOuz+qkR2WdqPnJUa1BukD/5Wdleb7qaFkQROQZ6SY6KpjRLXWd1Gx5izS2/JBbk9txvW+vckMnInJqP2/VU+4VgFsRObW8an7yH5SLwIWSyNohAAAAAElFTkSuQmCC);
+	-webkit-mask-size: 230px 24px; mask-size: 230px 24px;
+}
+.n0{ -webkit-mask-position: 0 0; mask-position: 0 0; }
+.n1{ -webkit-mask-position: calc(23px*-1) 0; mask-position: calc(23px*-1) 0; }
+.n2{ -webkit-mask-position: calc(23px*-2) 0; mask-position: calc(23px*-2) 0; }
+.n3{ -webkit-mask-position: calc(23px*-3) 0; mask-position: calc(23px*-3) 0; }
+.n4{ -webkit-mask-position: calc(23px*-4) 0; mask-position: calc(23px*-4) 0; }
+.n5{ -webkit-mask-position: calc(23px*-5) 0; mask-position: calc(23px*-5) 0; }
+.n6{ -webkit-mask-position: calc(23px*-6) 0; mask-position: calc(23px*-6) 0; }
+.n7{ -webkit-mask-position: calc(23px*-7) 0; mask-position: calc(23px*-7) 0; }
+.n8{ -webkit-mask-position: calc(23px*-8) 0; mask-position: calc(23px*-8) 0; }
+.n9{ -webkit-mask-position: calc(23px*-9) 0; mask-position: calc(23px*-9) 0; }
+.score{ position:absolute; top: 6px; display:flex; gap: 2px; }
+.side-left{ left: 72px; -webkit-transform: scale(1.2);transform: scale(1.2);         height: 44px;width: 136px;display: flex;justify-content: center;align-items: center; }
+.side-right{ right: 32px; -webkit-transform: scale(1);transform: scale(1); transform-origin: right top; justify-content:flex-end; height: 44px;width: 132px;display: flex;justify-content: center;align-items: center; }
+.round{ position:absolute; left:50%; transform: translateX(-50%); top: 20px;margin-top: 16px;    left: calc(50% + 32px); }
+.round-num{ display:flex; gap:2px; transform: scale(0.8); transform-origin:center top; }
+
+
+/* =====HudHint ===== */
+.hud-anim-overlay{
+  height:100vh;width: 100vw;position: fixed;inset: 0;
+  pointer-events: none; background: transparent;
+  opacity: 1; 
+  z-index: 99999;
+  isolation: isolate;
+}
+.pos-box{ position:absolute; left:0; top:0; pointer-events:none; transform-origin:center center; }
+.anim-box{
+  display:inline-flex; align-items:center; justify-content:center;
+  pointer-events:none; border-radius:16px; overflow:hidden;
+  background:transparent; max-width:68vw; max-height:72vh;
+}
+.anim-img{ display:block; max-width:100%; max-height:100%; }
+@keyframes breathe{ 0%,100%{transform:none;} 50%{transform:scale(1.02);} }
+.breathe .anim-img{ animation:breathe 2.2s ease-in-out infinite; }
