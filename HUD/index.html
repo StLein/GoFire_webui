@@ -10,6 +10,10 @@
 		* {margin: 0;padding: 0;}
 		* {font-family: "Microsoft Yahei", Helvetica, Arial, sans-serif;}
 		.debug button{margin-top: 1em;}
+		@font-face {
+			font-family: "方正兰亭黑_GBK";
+			src: url(../FZLTHK.ttf);
+		}
 	</style>
 </head>
 
@@ -17,19 +21,28 @@
 <div id="app">
 <template v-if="true">
 	<div v-if="debug" class="debug" style="position: fixed;padding: 2em;z-index: 99; display: flex;flex-direction: column;align-items: flex-start;">
-		<button @click="showHeroSlot" >变身特效</button>
-		<button @click="showHeroGlass" >玻璃特效</button>
 		<span>
+			<button @click="showHeroSlot" >变身特效</button>
+			<button @click="showHeroGlass" >玻璃特效</button>
+		</span>
+		<span>
+		<button @click="window.fakePlayer.m_iRole = 4 + getRandomInt(6)" >随机英雄</button>
+		<button @click="window.fakePlayer.m_iRole = RoleType.ROLE_BladeHero" >恶魔剑客</button>
 		<button @click="useFakeSkill" >使用G</button>
 		<button @click="useFakeAbility" v-if="ability_show">使用F</button>
-		<button @click="window.fakePlayer.m_iRole = RoleType.ROLE_BladeHero" >恶魔剑客</button>
-		<button @click="useSpace(1)" v-if="iRole == RoleType.ROLE_BladeHero">使用Space</button>
+		<button @click="useSpace(1)" v-if="ability_show && iRole == RoleType.ROLE_BladeHero">使用Space</button>
 		</span>
-		<button @click="window.fakeGlobal.game_mod=window.MOD_ZS">显示ZS记分牌</button>
 		<div >
+			<button @click="window.fakeGlobal.game_mod=window.MOD_ZS">ZS记分牌</button>
 			<button @click="demo_Kills"      style="margin-right:8px;">cso击杀提醒</button>
 			<button @click="demo_RoundClear" style="margin-right:8px;">round提醒</button>
 			<button @click="demo_Tooltip"    style="margin-right:8px;">tooltip提醒</button>
+		</div>
+		<div >
+			<button @click="demo_CountDownAttribute"      style="margin-right:8px;">BUFF倒数</button>
+			<button @click="demo_ShowAttribute(getRandomInt(2))" style="margin-right:8px;">BUFF展示</button>
+			<button @click="demo_BuffLevel()" style="margin-right:8px;">BUFF层数</button>
+			<button @click="demo_SetAttribute(attribute1==6?7:6)" style="margin-right:8px;">人类技能</button>
 		</div>
 	</div>
     <!-- <div class="hud-anim-overlay" style="transform: perspective(1);">
@@ -57,8 +70,69 @@
 			</div>
 		</div>
 	</transition>
-	<div v-if="iGameMod==window.MOD_ZS" class="top-center" style="transform: perspective(1vh);width: 100%;text-align: center;margin-top: 0.6em;" >
+	<div v-if="iGameMod==window.MOD_ZS" class="top-center" style="transform: perspective(1vh);width: 100%;text-align: center;margin-top: 0.6em;position: fixed;" >
 		<zbs-scoreboard style="margin: auto;" :left="teamScore" :right="iScore" :round="teamRounds" left-color="#FFFFFF" right-color="#77BFFF" ></zbs-scoreboard>
+	</div>
+	<div v-if="iGameMod==window.MOD_Nano4Craft && round_begin" style="transform: perspective(1vh);position: fixed;top: 12.8vw;display: flex;flex-direction: column;">
+		<div style="margin-bottom: 12px;">
+			<p v-if="BuffLevel && iTeamNumber == TEAM_CT" style="position: absolute;left: 4px;color: white;font-size: 24px;"> {{ BuffLevel }}</p>
+			<img :src="'UI/NanoCraft/Skill_Random/Skill_Random_Mer_0'+ attribute1 + '.PNG'">
+		</div>
+		<div>
+			<p v-if="BuffLevel && iTeamNumber == TEAM_TERRORIST"  style="position: absolute;left: 4px;color: white;font-size: 24px;" > {{ BuffLevel }}</p>
+			<img :src="'UI/NanoCraft/Skill_Random/Skill_Random_Nano_0'+ attribute2 + '.PNG'">
+		</div>
+	</div>
+	<div v-if="RandomAttr_Show" class="font_fz" style="transform: perspective(1vh);width: 100%;text-align: center;position: fixed;margin-top: 18vh;">
+		<div class="random-attr-crop"></div>
+		<div style="width: 100%;position: fixed;top: 20px;">
+			<span v-if="AttributeTeam" class="noticeAttribute" style="background-position: 0px -302px;"></span>
+			<span v-else  class="noticeAttribute" style="background-position: 0px -320px;"></span>
+		</div>
+		<div style="display: flex;">
+			<div style="position: fixed; top: 72px; display: flex;justify-content: center;width: 100%;color: white;font-size: 14px;">
+				<div v-if="AttributeTeam"  style="width: 300px;">
+					<img :src="'UI/NanoCraft/Skill_Random/Skill_Random_Mer_0'+ attribute1 + '.PNG'" style="margin-bottom: 12px;">
+					<p>佣兵：{{getBuffName('human',attribute1)}}</p>
+					<p>{{getBuffDesc('human',attribute1)}}</p>
+				</div>
+				<div v-else style="width: 300px;">
+					<img :src="'UI/NanoCraft/Skill_Random/Skill_Random_Nano_0'+ attribute2 + '.PNG'" style="margin-bottom: 12px;">
+					<p>生化：{{getBuffName('nano',attribute2)}}</p>
+					<p>{{getBuffDesc('nano',attribute2)}}</p>
+				</div>
+			</div>
+			<div>
+			</div>
+		</div>
+	</div>
+	<div v-else-if="RandomAttr_Count" class="font_fz" style="transform: perspective(1vh);width: 100%;text-align: center;position: fixed;margin-top: 18vh;">
+		<div class="random-attr-crop"></div>
+		<div style="display: flex;">
+			<span class="noticeAttribute" style="position: fixed;top: 20px;left: calc(50% - 240px);background-position: 0px -320px;"></span>
+			<span class="noticeAttribute" style="position: fixed;top: 20px;right: calc(50% - 240px);background-position: 0px -302px;"></span>
+		</div>
+		<div style="display: flex;">
+			<div style="position: fixed; top: 72px; display: flex;justify-content: center;width: 100%;color: white;font-size: 14px;">
+				<div style="width: 300px;">
+					<img :src="'UI/NanoCraft/Skill_Random/Skill_Random_Nano_0'+ attribute2 + '.PNG'" style="margin-bottom: 12px;">
+					<p>生化：{{getBuffName('nano',attribute2)}}</p>
+					<p>{{getBuffDesc('nano',attribute2)}}</p>
+				</div>
+				<div style="width: 300px;">
+					<img :src="'UI/NanoCraft/Skill_Random/Skill_Random_Mer_0'+ attribute1 + '.PNG'" style="margin-bottom: 12px;">
+					<p>佣兵：{{getBuffName('human',attribute1)}}</p>
+					<p>{{getBuffDesc('human',attribute1)}}</p>
+					<!-- <p>佣兵：救世主</p> -->
+					<!-- <p>回合开始时，救世主英雄登场。</p> -->
+				</div>
+			</div>
+			<div>
+			</div>
+		</div>
+		<div style="display: flex;justify-content: center;">
+			<span class="digitAttribute" :class="'numberAttr'+AttributeCountDown" style="position: fixed;bottom: 16px;"></span>
+		</div>
 	</div>
 	<div class="bottom-center" style="transform: perspective(1vh)">
 		<!-- <p id="hintText" class="HudHintTextSmall">notice text</p> -->
@@ -66,40 +140,62 @@
 			<p v-if="showHintText" class="HudHintTextSmall">{{ hintText }}</p>
 		</transition>
 	</div>
-	<div v-if="bIsAlive" class="bottom-left" style="left: 108px;">
+	<div v-if="bIsAlive" style="transform: perspective(1vh);left: 108px;bottom: 90px;position: fixed;">
 		<!-- 恶魔剑客技能 -->
 		<template v-if="skillShow && iRole == RoleType.ROLE_BladeHero">
 			<template v-if="ability_show">
-				<div  class="skill-container" >
+				<div style="position: absolute;left:0px">
 					<img :src="skill_image" class="skill-image"  :style="{ maskImage: 'linear-gradient(to left, black 50%, transparent 50%)', marginLeft:'-34px' }">
 				</div>
-				<div  class="ability-container">
+				<div style="position: absolute;left:34px">
 					<img :src="ability_image" class="skill-image"  :style="{ maskImage: ability_maskImage, marginLeft:ability_marginLeft, marginRight:ability_marginRight }">
 					<p class="cooldown-text"  v-if="ability_coolDown" style="left: 50%;" >{{ ability_coolDown }}</p>
 				</div>
-				<div class="skill-container" style="margin-left:34px">
+				<div style="position: absolute;left:68px">
+					<div v-if="attribute1 == 6" style="margin-left: 3px;margin-top: 2px;">
+						<img src="UI/NanoCraft/Skill_Random/Skill_Random_Mer_06.png" style="display: block;width: 28px;height:28px">
+					</div>
+					<div v-if="attribute1 == 7" style="margin-left: 3px;margin-top: 2px;">
+						<img src="UI/NanoCraft/Skill_Random/Skill_Random_Mer_07.png" style="display: block;width: 28px;height:28px">
+					</div>
+				</div>
+				<div style="position: absolute;left:136px">
 					<img src='UI/NANO4_ABILITY/Skill/SKILL_GHOSTBLADE_DEFAULT_DASH.PNG' class="skill-image"  :style="{ maskImage: skill_maskImage, marginLeft:skill_marginLeft }">
 					<p class="cooldown-text"  v-if="skill_coolDown"  >{{ skill_coolDown }}</p>
 				</div>
 			</template>
 			<template v-else >
-				<div class="skill-container" >
+				<div style="position: absolute;left:0px">
 					<img :src="skill_image" class="skill-image"  :style="{ maskImage: 'linear-gradient(to right, black 50%, transparent 50%)', marginLeft:'0' }">
 				</div>
-				<div class="ability-container">
-					<img :src="ability_image" class="skill-image" style="visibility: hidden;" :style="{ maskImage: ability_maskImage, marginLeft:ability_marginLeft, marginRight:ability_marginRight }">
-					<!-- <div class="skill-image" :style="{ marginRight:ability_marginRight }"></div> -->
+				<div style="position: absolute;left:68px">
+					<div v-if="attribute1 == 6" style="margin-left: 3px;margin-top: 2px;">
+						<img src="UI/NanoCraft/Skill_Random/Skill_Random_Mer_06.png" style="display: block;width: 28px;height:28px">
+					</div>
+					<div v-if="attribute1 == 7" style="margin-left: 3px;margin-top: 2px;">
+						<img src="UI/NanoCraft/Skill_Random/Skill_Random_Mer_07.png" style="display: block;width: 28px;height:28px">
+					</div>
 				</div>
 			</template>
 		</template>
 		<template v-else>
-			<div v-if="ability_show" class="ability-container">
+			<div v-if="ability_show" style="position: absolute;left:0px">
 				<img :src="ability_image" class="skill-image"  :style="{ maskImage: ability_maskImage, marginLeft:ability_marginLeft, marginRight:ability_marginRight }">
-				<!-- <p class="cooldown-text" >{{ ability_show }}</p> -->
+				<p class="cooldown-text" style="left:50%" v-if="ability_coolDown" >{{ ability_coolDown }}</p>
 			</div>
-			<div v-if="skillShow" class="skill-container" >
+			<div v-if="skillShow" style="position: absolute;left:34px">
 				<img :src="skill_image" class="skill-image"  :style="{ maskImage: skill_maskImage, marginLeft:skill_marginLeft }">
 				<p class="cooldown-text"  v-if="skill_coolDown"  >{{ skill_coolDown }}</p>
+			</div>
+			<div style="position: absolute;left:68px" v-if="AltSkill">
+				<div v-if="attribute1 == 6" style="margin-left: 3px;margin-top: 2px;">
+					<img src="UI/NanoCraft/Skill_Random/Skill_Random_Mer_06.png" style="display: block;width: 28px;height:28px" :class="{'grayIco':AltSkill>1}">
+					<!-- <p class="cooldown-text" style="left: 50%;">{{ AltSkill }}</p> -->
+				</div>
+				<div v-if="attribute1 == 7" style="margin-left: 3px;margin-top: 2px;">
+					<img src="UI/NanoCraft/Skill_Random/Skill_Random_Mer_07.png" style="display: block;width: 28px;height:28px" :class="{'grayIco':AltSkill>1}">
+					<!-- <p class="cooldown-text" style="left: 50%;">{{ AltSkill }}</p> -->
+				</div>
 			</div>
 		</template>
 	</div>
@@ -110,21 +206,15 @@
 </body>
 
 <style>
-	.bottom-left {
-		left: 0;
-		bottom: 0;
-		position: absolute;
-		transform: perspective(1vh);
-	}
 	.ability-container {
 		position: relative;
 		display: inline-block;
-		margin-bottom: 56px;
+		/* margin-bottom: 56px; */
 	}
 	.skill-container {
 		position: relative; /* 冷却倒计时相对于这个容器定位 */
 		display: inline-block;
-		margin-bottom: 56px;
+		/* margin-bottom: 56px; */
 	}
 	.skill-image {
 		display: block;
@@ -140,7 +230,55 @@
 		/* font-weight: bold; */
 		/* text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);  */
 	}
-	</style>
+.grayIco{
+    filter: grayscale(100%) opacity(61.8%);
+    -webkit-filter: grayscale(100%) opacity(61.8%);
+}
+.font_fz *{
+    font-family: "方正兰亭黑_GBK";
+}
+.random-attr-crop {
+    width: 1024px;
+    height: 272px;
+    margin: 0 auto;
+    background-image: url("UI/NanoCraft/RandomAttribute_BG.png");
+    background-repeat: no-repeat;
+    background-position: 0px 0px; 
+    background-size: 1024px 512px; /* 原图尺寸 */
+    overflow: hidden;
+}
+.digitAttribute{
+	display:inline-block;
+	width:20px;
+	height:24px;
+	background-image: url("UI/NanoCraft/RandomAttribute_BG.png");
+	background-repeat:no-repeat;
+	background-size:1024px 512px; /* 原图尺寸 */
+	/* transform: scale(1.5); transform-origin: left bottom; */
+}
+
+/* y=346，高24；每个数字宽20，x 依次右移 */
+.numberAttr0 { background-position:   0px -346px; }   /* (0,   346) -> ( 20, 370) */
+.numberAttr1 { background-position: -20px -346px; }   /* (20,  346) -> ( 40, 370) */
+.numberAttr2 { background-position: -40px -346px; }   /* (40,  346) -> ( 60, 370) */
+.numberAttr3 { background-position: -60px -346px; }   /* (60,  346) -> ( 80, 370) */
+.numberAttr4 { background-position: -80px -346px; }   /* (80,  346) -> (100, 370) */
+.numberAttr5 { background-position:-100px -346px; }   /* (100, 346) -> (120, 370) */
+.numberAttr6 { background-position:-120px -346px; }   /* (120, 346) -> (140, 370) */
+.numberAttr7 { background-position:-140px -346px; }   /* (140, 346) -> (160, 370) */
+.numberAttr8 { background-position:-160px -346px; }   /* (160, 346) -> (180, 370) */
+.numberAttr9 { background-position:-180px -346px; }   /* (180, 346) -> (200, 370) */
+
+.noticeAttribute{
+	display:inline-block;
+	width:180px;
+	height:20px;
+	background-image: url("UI/NanoCraft/RandomAttribute_BG.png");
+	background-repeat:no-repeat;
+	background-size:1024px 512px; /* 原图尺寸 */
+	/* transform: scale(1.5); transform-origin: left bottom; */
+}
+</style>
 	
 <style scoped>
 	.fade-enter-active,.fade-leave-active {

@@ -1,4 +1,7 @@
 
+window.TEAM_CT = 3
+window.TEAM_TERRORIST = 2
+
 window.RoleType = {
 	ROLE_None: 0,
 	ROLE_Terminator: 1,
@@ -19,8 +22,12 @@ window.RoleType = {
 	ROLE_ArmoredTerminator: 16,
 	ROLE_ViperTerminator: 17,
 };
-var MOD_Nano4Ability = 23;
+var MOD_Nano4Ability = 24;
+window.MOD_Nano4Craft = 23;
 window.MOD_ZS = 28;
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
 
 // 大灾变计分板
 Vue.component('zbs-scoreboard', {
@@ -61,12 +68,14 @@ Vue.component('zbs-scoreboard', {
 	`
 });
 
+window.m_task = {};
 window.vueGame = new Vue({
 	el: '#app',
 	data: {
 		debug:false,
 		display:false,
 		bIsAlive:false,
+		iTeamNumber:2,
 
 		iRole:0,
 		iScore:0,
@@ -107,12 +116,151 @@ window.vueGame = new Vue({
 		Fx_Glass_frame: 0,
 		Fx_Glass_IMG:'UI/frame/glass/0.png',
 
+		AltSkill : 0,
+		BuffLevel : 0,
+		RandomAttr_Show: false,
+		RandomAttr_Count: false,
+		RandomAttr_Timer: null,
+		AttributeTeam: 0,
+		AttributeCountDown: 0,
+		attribute1: 0,
+		attribute2: 0,
+		round_begin: 0,
+
 		teamScore: 0, teamRounds : 0
 	},
 	created: function () {
 		this.display = true;
 	},
 	methods: {
+		clearTimer(timer){
+			if(window.m_task[timer]) {
+				clearTimeout(window.m_task[timer]);
+				window.m_task[timer] = null;
+			}
+		},
+		demo_CountDownAttribute(){
+			window.fakeGlobal.gamerules.attribute1 = getRandomInt(10);
+			window.fakeGlobal.gamerules.attribute2 = getRandomInt(10);
+			for (let index = 0; index < 5; index++) {
+				this.clearTimer("CountDownAttribute"+index);
+				window.m_task["CountDownAttribute"+index] = setTimeout((index) => {
+					vueGame.countRandomAttribute(5 - index);
+				}, 1000 * index, index);
+			}
+		},
+		demo_ShowAttribute(team){
+			for (let index = 0; index < 5; index++) {
+				this.clearTimer("CountDownAttribute"+index);
+			}
+			vueGame.showRandomAttribute(team);
+			window.fakeGlobal.curtime = 1;
+			window.fakeGlobal.game_mod = MOD_Nano4Craft;
+		},
+		demo_SetAttribute(attr){
+			window.fakeGlobal.curtime = 1;
+			window.fakeGlobal.game_mod = MOD_Nano4Craft;
+			window.fakeGlobal.gamerules.attribute1 = attr;
+			window.fakePlayer.m_iAltSkill = getRandomInt(3);
+		},
+		demo_BuffLevel(){
+			window.fakeGlobal.curtime = 1;
+			window.fakeGlobal.game_mod = MOD_Nano4Craft;
+			window.fakePlayer.m_iTeamNumber = (this.iTeamNumber== 2) ? 3: 2 ;
+			window.fakePlayer.m_iBuffLevel += getRandomInt(3);
+		},
+		getBuffName(team, buff_num){
+			if (team == 'human') {
+				switch (buff_num) {
+					case 0: return '救世主';
+					case 1: return '致命一击';
+					case 2: return '连发手雷';
+					case 3: return '强力补给';
+					case 4: return '无限子弹';
+					case 5: return '快速装弹';
+					case 6: return '绝命生还';
+					case 7: return '特工';
+					case 8: return '英雄出现';
+					case 9: return '致命攻击';
+				}
+			} else {
+				switch (buff_num) {
+					case 0: return '基因变异';
+					case 1: return '末日降临';
+					case 2: return '过度增长';
+					case 3: return '硬化';
+					case 4: return '补给防御';
+					case 5: return '钢铁利爪';
+					case 6: return '感染经验值';
+					case 7: return '沸血';
+					case 8: return '终结者出现';
+					case 9: return '重生契约';
+				}
+			}
+			return '';
+		},
+		getBuffDesc(team, buff_num){
+			if (team == 'human') {
+				switch (buff_num) {
+					case 0: return '回合开始时，救世主英雄登场。';
+					case 1: return '击杀生化幽灵后，攻击力会增加。';
+					case 2: return '提高手雷携带数量和攻击力。';
+					case 3: return '获取补给箱时增加攻击力，可叠加。';
+					case 4: return '无限弹药。';
+					case 5: return '加快佣兵装弹速度。';
+					case 6: return '所有佣兵均可使用特殊技能。';
+					case 7: return '所有佣兵均可使用特殊技能。';
+					case 8: return '额外提供蓝色补给箱。';
+					case 9: return '适用暴击伤害。';
+				}
+			} else {
+				switch (buff_num) {
+					case 0: return '缩短技能冷却时间。';
+					case 1: return '首波生化全部作为终结者登场。';
+					case 2: return '进化时，获得额外HP。';
+					case 3: return '减少受到的伤害。';
+					case 4: return '获取补给箱时增加防御力。';
+					case 5: return '生化幽灵的攻击力与攻击范围增加。';
+					case 6: return '功感染后，自身攻击力与HP都会增加。';
+					case 7: return '取补给箱时，获得移动速度加成。';
+					case 8: return '额外提供红色补给箱。';
+					case 9: return '被击杀后原地出现生化盒，一段时间后复活。';
+				}
+			}
+			return '';
+		},
+		showRandomAttribute(team){
+			this.AttributeTeam = team;
+			this.$nextTick(() => { 
+				this.RandomAttr_Show = true; 
+				this.RandomAttr_Count = false; 
+			});
+			if (this.RandomAttr_Timer) {
+				clearTimeout(this.RandomAttr_Timer);
+				this.RandomAttr_Timer = null;
+			}
+			this.RandomAttr_Timer = setTimeout(() => {
+				vueGame.RandomAttr_Show = false;
+				vueGame.RandomAttr_Count = false;
+				vueGame.RandomAttr_Timer = null;
+			}, 3000);
+		},
+		countRandomAttribute(countDown){
+			this.AttributeCountDown = countDown;
+			this.$nextTick(() => { 
+				this.RandomAttr_Show = false; 
+				this.RandomAttr_Count = true; 
+			});
+			if (this.RandomAttr_Timer) {
+				clearTimeout(this.RandomAttr_Timer);
+				this.RandomAttr_Timer = null;
+			}
+			this.RandomAttr_Timer = setTimeout(() => {
+				vueGame.RandomAttr_Show = false;
+				vueGame.RandomAttr_Count = false;
+				vueGame.RandomAttr_Timer = null;
+			}, 1500);
+		},
 		showHeroGlass: function () {
 			if(window.engine) {
 				// 全屏更新太卡了，现改为调api播放帧图
@@ -226,23 +374,24 @@ window.vueGame = new Vue({
 				if (remainingTime <= 0) {
 					clearInterval(vueGame.$data.ability_timer);
 					vueGame.$data.ability_timer = null;
+					window.fakePlayer.m_iAbilityStatus = 1;
 				}
 			}, 1000);
 		},
 		useSpace: function (coolDownTime ) {
-			if (this.ability_timer) {
-				clearInterval(this.ability_timer);
+			if (this.skillTimer) {
+				clearInterval(this.skillTimer);
 			}
 
 			this.skill_coolDown = coolDownTime;
 			var finishTime = Date.now() + coolDownTime * 1000;
 
-			this.ability_timer = setInterval(() => { // 冷却倒数
+			this.skillTimer = setInterval(() => { // 冷却倒数
 				var remainingTime = Math.max(0, Math.round((finishTime - Date.now()) / 1000));
 				vueGame.$data.skill_coolDown = remainingTime;
 				if (remainingTime <= 0) {
-					clearInterval(vueGame.$data.ability_timer);
-					vueGame.$data.ability_timer = null;
+					clearInterval(vueGame.$data.skillTimer);
+					vueGame.$data.skillTimer = null;
 				}
 			}, 1000);
 		},
@@ -294,8 +443,16 @@ class CHudGamePlay extends CHudBase {
 
 	MsgFunc_ZombieEvent(msg) {
 		var ZombieEventType = msg.readByte();
-		if (ZombieEventType == 107) {
+		if (ZombieEventType == 107) { // ZEVE_HeroGlassFX
 			vueGame.showHeroGlass();
+		} else if(ZombieEventType == 120 ){ //ZEVE_AbilityCount
+			
+		} else if(ZombieEventType == 121 ){ //ZEVE_AttributeCount
+			var countDown = msg.readByte();
+			vueGame.countRandomAttribute(countDown);
+		} else if(ZombieEventType == 122 ){ //ZEVE_AttributeShow
+			var team = msg.readByte();
+			vueGame.showRandomAttribute(team);
 		}
 	}
 
@@ -364,7 +521,16 @@ class CHudGamePlay extends CHudBase {
 		vueGame.$data.iScore = player.m_iScore;
 		vueGame.$data.iGameMod = globals.game_mod;
 		vueGame.$data.bIsAlive = player.m_bIsAlive;
+		vueGame.$data.iTeamNumber = player.m_iTeamNumber;
 		vueGame.$data.ability_show =  player.m_iAbilityStatus;
+		vueGame.$data.AltSkill =  player.m_iAltSkill;
+		vueGame.$data.BuffLevel =  player.m_iBuffLevel;
+
+		let curtime = globals.curtime;
+		let gamerules = globals.gamerules;
+		vueGame.$data.attribute1 = gamerules.attribute1;
+		vueGame.$data.attribute2 = gamerules.attribute2;
+		vueGame.$data.round_begin = curtime > gamerules.round_begin_time;
 
 		let team_ct = globals.team_ct;
 		if (team_ct) {
@@ -383,6 +549,9 @@ class CHudGamePlay extends CHudBase {
 					break;
 				case RoleType.ROLE_BladeHero:
 					vueGame.$data.ability_image = 'UI/NANO4_ABILITY/Skill/SKILL_GHOSTBLADE_DEFAULT_DEFENSE.PNG'
+					break;
+				case RoleType.ROLE_VoidTerminator:
+					vueGame.$data.ability_image = 'UI/NANO4_ABILITY/Skill/SKILL_VOIDTERMINATOR_DEFAULT_INSTALL.PNG'
 					break;
 			}
 			if (vueGame.$data.ability_show == 1) {
@@ -452,12 +621,21 @@ window.fakePlayer = {
 	debug:true,
 	m_iScore:0,
 	m_bIsAlive:true,
+	m_iTeamNumber:2,
+	m_iAltSkill:0,
+	m_iBuffLevel:0,
 	m_iSkillStatus:0,
 	m_iAbilityStatus:1,
 	m_iRole:RoleType.ROLE_MechanicHero,
 };
 window.fakeGlobal = {
+	curtime:0,
 	game_mod:MOD_Nano4Ability,
+	gamerules:{
+		attribute1:0,
+		attribute2:0,
+		round_begin_time:0,
+	},
 };
 if (typeof clientAPI === 'undefined') {
 

@@ -15,6 +15,7 @@
         "simTicksThisFrame",
         "network_protocol",
         "game_mod",
+        "gamerules",
         "team_ct",
         "team_terrorist",
       ];
@@ -46,6 +47,9 @@
     getBuyPresets() {
       return engineAPI.getBuyPresets();
     }
+    getWeaponList() {
+      return engineAPI.getWeaponList();
+    }
 
     getCharacters() {
       return engineAPI.getCharacters();
@@ -69,6 +73,9 @@
 
     executeClientCmd(str) {
       return engineAPI.executeClientCmd(str);
+    }
+    openUrl(str) {
+      return engineAPI.openUrl(str);
     }
   }
 

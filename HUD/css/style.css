@@ -3,11 +3,6 @@ body {
   background-color: grey;
 }
 
-@font-face {
-    font-family: "方正兰亭黑_GBK";
-    src: url(../../../resource/FZLTHK.ttf);
-}
-
 .ChatFont {
   font-family: "Microsoft Yahei";
   font-size: 16px;
