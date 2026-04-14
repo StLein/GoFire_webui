@@ -51,7 +51,7 @@
       </div>
     </div> -->
 	<hud-anim ref="hud" register-global-as="HUDAnim"></hud-anim>
-	<div v-if="Fx_Glass_Show" style="transform: perspective(1vh);height:100vh;width: 100vw;position: fixed;">
+	<div v-if="Fx_Glass_Show" style="height:100vh;width: 100vw;position: fixed;">
 		<div>
 			<img :src="Fx_Glass_IMG" style="height: 100vh;width: 100vw;">
 		</div>
@@ -70,10 +70,10 @@
 			</div>
 		</div>
 	</transition>
-	<div v-if="iGameMod==window.MOD_ZS" class="top-center" style="transform: perspective(1vh);width: 100%;text-align: center;margin-top: 0.6em;position: fixed;" >
+	<div v-if="iGameMod==window.MOD_ZS" class="top-center" style="width: 100%;text-align: center;margin-top: 0.6em;position: fixed;" >
 		<zbs-scoreboard style="margin: auto;" :left="teamScore" :right="iScore" :round="teamRounds" left-color="#FFFFFF" right-color="#77BFFF" ></zbs-scoreboard>
 	</div>
-	<div v-if="iGameMod==window.MOD_Nano4Craft && round_begin" style="transform: perspective(1vh);position: fixed;top: 12.8vw;display: flex;flex-direction: column;">
+	<div v-if="iGameMod==window.MOD_Nano4Craft && round_begin" style="position: fixed;top: 12.8vw;display: flex;flex-direction: column;">
 		<div style="margin-bottom: 12px;">
 			<p v-if="BuffLevel && iTeamNumber == TEAM_CT" style="position: absolute;left: 4px;color: white;font-size: 24px;"> {{ BuffLevel }}</p>
 			<img :src="'UI/NanoCraft/Skill_Random/Skill_Random_Mer_0'+ attribute1 + '.PNG'">
@@ -83,37 +83,36 @@
 			<img :src="'UI/NanoCraft/Skill_Random/Skill_Random_Nano_0'+ attribute2 + '.PNG'">
 		</div>
 	</div>
-	<div v-if="RandomAttr_Show" class="font_fz" style="transform: perspective(1vh);width: 100%;text-align: center;position: fixed;margin-top: 18vh;">
-		<div class="random-attr-crop"></div>
-		<div style="width: 100%;position: fixed;top: 20px;">
-			<span v-if="AttributeTeam" class="noticeAttribute" style="background-position: 0px -302px;"></span>
-			<span v-else  class="noticeAttribute" style="background-position: 0px -320px;"></span>
-		</div>
-		<div style="display: flex;">
-			<div style="position: fixed; top: 72px; display: flex;justify-content: center;width: 100%;color: white;font-size: 14px;">
-				<div v-if="AttributeTeam"  style="width: 300px;">
-					<img :src="'UI/NanoCraft/Skill_Random/Skill_Random_Mer_0'+ attribute1 + '.PNG'" style="margin-bottom: 12px;">
-					<p>佣兵：{{getBuffName('human',attribute1)}}</p>
-					<p>{{getBuffDesc('human',attribute1)}}</p>
-				</div>
-				<div v-else style="width: 300px;">
-					<img :src="'UI/NanoCraft/Skill_Random/Skill_Random_Nano_0'+ attribute2 + '.PNG'" style="margin-bottom: 12px;">
-					<p>生化：{{getBuffName('nano',attribute2)}}</p>
-					<p>{{getBuffDesc('nano',attribute2)}}</p>
-				</div>
+	<div v-if="RandomAttr_Show" class="font_fz" style="width: 100%;text-align: center;position: fixed;">
+		<div class="random-attr-crop" style="margin-top: 18vh;">
+			<div style="width: 100%;position: absolute;top: 20px;left: 0;">
+				<span v-if="AttributeTeam" class="noticeAttribute" style="background-position: 0px -302px;"></span>
+				<span v-else  class="noticeAttribute" style="background-position: 0px -320px;"></span>
 			</div>
-			<div>
+			<div style="display: flex;">
+				<div style="position: absolute;top: 72px;left: 0;display: flex;justify-content: center;width: 100%;color: white;font-size: 14px;">
+					<div v-if="AttributeTeam"  style="width: 300px;">
+						<img :src="'UI/NanoCraft/Skill_Random/Skill_Random_Mer_0'+ attribute1 + '.PNG'" style="margin-bottom: 12px;">
+						<p>佣兵：{{getBuffName('human',attribute1)}}</p>
+						<p>{{getBuffDesc('human',attribute1)}}</p>
+					</div>
+					<div v-else style="width: 300px;">
+						<img :src="'UI/NanoCraft/Skill_Random/Skill_Random_Nano_0'+ attribute2 + '.PNG'" style="margin-bottom: 12px;">
+						<p>生化：{{getBuffName('nano',attribute2)}}</p>
+						<p>{{getBuffDesc('nano',attribute2)}}</p>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-	<div v-else-if="RandomAttr_Count" class="font_fz" style="transform: perspective(1vh);width: 100%;text-align: center;position: fixed;margin-top: 18vh;">
-		<div class="random-attr-crop"></div>
-		<div style="display: flex;">
-			<span class="noticeAttribute" style="position: fixed;top: 20px;left: calc(50% - 240px);background-position: 0px -320px;"></span>
-			<span class="noticeAttribute" style="position: fixed;top: 20px;right: calc(50% - 240px);background-position: 0px -302px;"></span>
-		</div>
-		<div style="display: flex;">
-			<div style="position: fixed; top: 72px; display: flex;justify-content: center;width: 100%;color: white;font-size: 14px;">
+	<div v-else-if="RandomAttr_Count" class="font_fz" style="width: 100%;text-align: center;position: fixed;">
+		<div class="random-attr-crop" style="margin-top: 18vh;">
+			<div style="display: flex;">
+				<span class="noticeAttribute" style="position: absolute;top: 20px;left: calc(50% - 240px);background-position: 0px -320px;"></span>
+				<span class="noticeAttribute" style="position: absolute;top: 20px;right: calc(50% - 240px);background-position: 0px -302px;"></span>
+			</div>
+			<div style="display: flex;">
+				<div style="position: absolute;top: 72px;left: 0;display: flex;justify-content: center;width: 100%;color: white;font-size: 14px;">
 				<div style="width: 300px;">
 					<img :src="'UI/NanoCraft/Skill_Random/Skill_Random_Nano_0'+ attribute2 + '.PNG'" style="margin-bottom: 12px;">
 					<p>生化：{{getBuffName('nano',attribute2)}}</p>
@@ -127,11 +126,12 @@
 					<!-- <p>回合开始时，救世主英雄登场。</p> -->
 				</div>
 			</div>
-			<div>
+				<div>
+				</div>
 			</div>
-		</div>
-		<div style="display: flex;justify-content: center;">
-			<span class="digitAttribute" :class="'numberAttr'+AttributeCountDown" style="position: fixed;bottom: 16px;"></span>
+			<div style="display: flex;justify-content: center;">
+				<span class="digitAttribute" :class="'numberAttr'+AttributeCountDown" style="position: absolute;bottom: 16px;"></span>
+			</div>
 		</div>
 	</div>
 	<div class="bottom-center" style="transform: perspective(1vh)">
@@ -140,7 +140,7 @@
 			<p v-if="showHintText" class="HudHintTextSmall">{{ hintText }}</p>
 		</transition>
 	</div>
-	<div v-if="bIsAlive" style="transform: perspective(1vh);left: 108px;bottom: 90px;position: fixed;">
+	<div v-if="bIsAlive" style="left: 108px;bottom: 90px;position: fixed;">
 		<!-- 恶魔剑客技能 -->
 		<template v-if="skillShow && iRole == RoleType.ROLE_BladeHero">
 			<template v-if="ability_show">
@@ -153,10 +153,12 @@
 				</div>
 				<div style="position: absolute;left:68px">
 					<div v-if="attribute1 == 6" style="margin-left: 3px;margin-top: 2px;">
-						<img src="UI/NanoCraft/Skill_Random/Skill_Random_Mer_06.png" style="display: block;width: 28px;height:28px">
+						<img src="UI/NanoCraft/Skill_Random/Skill_Random_Mer_06.png" style="display: block;width: 28px;height:28px" :class="{'grayIco':AltSkill>1}">
+						<img src="UI\COMMON\Icon_Key\Icon_Key_Alt.PNG" style="display: block;width: 26px;margin-top: -11px;margin-left: 3px;" :class="{'grayIco':AltSkill>1}">
 					</div>
 					<div v-if="attribute1 == 7" style="margin-left: 3px;margin-top: 2px;">
-						<img src="UI/NanoCraft/Skill_Random/Skill_Random_Mer_07.png" style="display: block;width: 28px;height:28px">
+						<img src="UI/NanoCraft/Skill_Random/Skill_Random_Mer_07.png" style="display: block;width: 28px;height:28px" :class="{'grayIco':AltSkill>1}">
+						<img src="UI\COMMON\Icon_Key\Icon_Key_Alt.PNG" style="display: block;width: 26px;margin-top: -11px;margin-left: 3px;" :class="{'grayIco':AltSkill>1}">
 					</div>
 				</div>
 				<div style="position: absolute;left:136px">
@@ -170,17 +172,19 @@
 				</div>
 				<div style="position: absolute;left:68px">
 					<div v-if="attribute1 == 6" style="margin-left: 3px;margin-top: 2px;">
-						<img src="UI/NanoCraft/Skill_Random/Skill_Random_Mer_06.png" style="display: block;width: 28px;height:28px">
+						<img src="UI/NanoCraft/Skill_Random/Skill_Random_Mer_06.png" style="display: block;width: 28px;height:28px" :class="{'grayIco':AltSkill>1}">
+						<img src="UI\COMMON\Icon_Key\Icon_Key_Alt.PNG" style="display: block;width: 26px;margin-top: -11px;margin-left: 3px;" :class="{'grayIco':AltSkill>1}">
 					</div>
 					<div v-if="attribute1 == 7" style="margin-left: 3px;margin-top: 2px;">
-						<img src="UI/NanoCraft/Skill_Random/Skill_Random_Mer_07.png" style="display: block;width: 28px;height:28px">
+						<img src="UI/NanoCraft/Skill_Random/Skill_Random_Mer_07.png" style="display: block;width: 28px;height:28px" :class="{'grayIco':AltSkill>1}">
+						<img src="UI\COMMON\Icon_Key\Icon_Key_Alt.PNG" style="display: block;width: 26px;margin-top: -11px;margin-left: 3px;" :class="{'grayIco':AltSkill>1}">
 					</div>
 				</div>
 			</template>
 		</template>
 		<template v-else>
 			<div v-if="ability_show" style="position: absolute;left:0px">
-				<img :src="ability_image" class="skill-image"  :style="{ maskImage: ability_maskImage, marginLeft:ability_marginLeft, marginRight:ability_marginRight }">
+				<img  v-if="ability_image" :src="ability_image" class="skill-image"  :style="{ maskImage: ability_maskImage, marginLeft:ability_marginLeft, marginRight:ability_marginRight }">
 				<p class="cooldown-text" style="left:50%" v-if="ability_coolDown" >{{ ability_coolDown }}</p>
 			</div>
 			<div v-if="skillShow" style="position: absolute;left:34px">
@@ -190,10 +194,12 @@
 			<div style="position: absolute;left:68px" v-if="AltSkill">
 				<div v-if="attribute1 == 6" style="margin-left: 3px;margin-top: 2px;">
 					<img src="UI/NanoCraft/Skill_Random/Skill_Random_Mer_06.png" style="display: block;width: 28px;height:28px" :class="{'grayIco':AltSkill>1}">
+					<img src="UI\COMMON\Icon_Key\Icon_Key_Alt.PNG" style="display: block;width: 26px;margin-top: -11px;margin-left: 3px;" :class="{'grayIco':AltSkill>1}">
 					<!-- <p class="cooldown-text" style="left: 50%;">{{ AltSkill }}</p> -->
 				</div>
 				<div v-if="attribute1 == 7" style="margin-left: 3px;margin-top: 2px;">
 					<img src="UI/NanoCraft/Skill_Random/Skill_Random_Mer_07.png" style="display: block;width: 28px;height:28px" :class="{'grayIco':AltSkill>1}">
+					<img src="UI\COMMON\Icon_Key\Icon_Key_Alt.PNG" style="display: block;width: 26px;margin-top: -11px;margin-left: 3px;" :class="{'grayIco':AltSkill>1}">
 					<!-- <p class="cooldown-text" style="left: 50%;">{{ AltSkill }}</p> -->
 				</div>
 			</div>
@@ -241,6 +247,7 @@
     width: 1024px;
     height: 272px;
     margin: 0 auto;
+    position: relative;
     background-image: url("UI/NanoCraft/RandomAttribute_BG.png");
     background-repeat: no-repeat;
     background-position: 0px 0px; 

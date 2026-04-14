@@ -1,6 +1,6 @@
 body {
   overflow: hidden;
-  background-color: grey;
+  /* background-color: grey; */
 }
 
 .ChatFont {
@@ -62,7 +62,7 @@ body {
 }
 
 .Hero_Select_Comp{
-  transform: perspective(1vh);
+  /* transform: perspective(1vh); */
 	position: fixed;
 	top: 20%;
 	width: 100%;

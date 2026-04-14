@@ -127,6 +127,7 @@ window.vueGame = new Vue({
 		attribute2: 0,
 		round_begin: 0,
 
+		local_index:0,
 		teamScore: 0, teamRounds : 0
 	},
 	created: function () {
@@ -243,7 +244,7 @@ window.vueGame = new Vue({
 				vueGame.RandomAttr_Show = false;
 				vueGame.RandomAttr_Count = false;
 				vueGame.RandomAttr_Timer = null;
-			}, 3000);
+			}, 1200);
 		},
 		countRandomAttribute(countDown){
 			this.AttributeCountDown = countDown;
@@ -445,6 +446,8 @@ class CHudGamePlay extends CHudBase {
 		var ZombieEventType = msg.readByte();
 		if (ZombieEventType == 107) { // ZEVE_HeroGlassFX
 			vueGame.showHeroGlass();
+		} else if(ZombieEventType == 110 ){ //ZEVE_AsceticShieldCreate
+		} else if(ZombieEventType == 111 ){ //ZEVE_AsceticShieldExplosion
 		} else if(ZombieEventType == 120 ){ //ZEVE_AbilityCount
 			
 		} else if(ZombieEventType == 121 ){ //ZEVE_AttributeCount
@@ -525,6 +528,7 @@ class CHudGamePlay extends CHudBase {
 		vueGame.$data.ability_show =  player.m_iAbilityStatus;
 		vueGame.$data.AltSkill =  player.m_iAltSkill;
 		vueGame.$data.BuffLevel =  player.m_iBuffLevel;
+		vueGame.$data.local_index =  player.index;
 
 		let curtime = globals.curtime;
 		let gamerules = globals.gamerules;
@@ -553,6 +557,13 @@ class CHudGamePlay extends CHudBase {
 				case RoleType.ROLE_VoidTerminator:
 					vueGame.$data.ability_image = 'UI/NANO4_ABILITY/Skill/SKILL_VOIDTERMINATOR_DEFAULT_INSTALL.PNG'
 					break;
+				case RoleType.ROLE_ArmoredTerminator:
+					vueGame.$data.ability_image = 'UI/NANO4_ABILITY/Skill/SKILL_GRANDTERMINATOR_DEFAULT_ROAR.PNG'
+					break;
+				default:
+					vueGame.$data.ability_image = ''
+					break;
+
 			}
 			if (vueGame.$data.ability_show == 1) {
 				vueGame.$data.ability_marginLeft = '-34px';
@@ -597,6 +608,9 @@ class CHudGamePlay extends CHudBase {
 			case RoleType.ROLE_OutlawterMinator:
 				vueGame.$data.skill_image = 'UI/NANO4_ABILITY/Skill/SKILL_OUTLAWTERMINATOR_DEFAULT_SHATTER.PNG'
 				break;
+			case RoleType.ROLE_ArmoredTerminator:
+				vueGame.$data.skill_image = 'UI/NANO4_ABILITY/Skill/SKILL_GRANDTERMINATOR_DEFAULT_SHIELD.PNG'
+				break;
 			case RoleType.ROLE_BladeHero:
 				vueGame.$data.skill_image = 'UI/NANO4_ABILITY/Skill/SKILL_GHOSTBLADE_DEFAULT_STANCECHANGE.PNG'
 				break;
@@ -627,6 +641,7 @@ window.fakePlayer = {
 	m_iSkillStatus:0,
 	m_iAbilityStatus:1,
 	m_iRole:RoleType.ROLE_MechanicHero,
+	index:0,
 };
 window.fakeGlobal = {
 	curtime:0,
